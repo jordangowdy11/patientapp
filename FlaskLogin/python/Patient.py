@@ -8,7 +8,7 @@ Created on 13 Feb 2019
 if __name__ == '__main__':
     
     pass
-=======
+
 from flask.app import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import backref
@@ -23,6 +23,8 @@ class Patient(db.Model):
     
     patient_id = db.Column(db.Integer, primary_key = True)
     name = db.Column('patient_name', db.String(50))
+    email = db.Column('patient_email',db.String(50))
+    password = db.Column('patient_password',db.String(20))
     sex = db.Column(db.String(50))
     age = db.Column(db.Integer)
     current_location = db.Column(db.String(50))
@@ -30,6 +32,8 @@ class Patient(db.Model):
     
     def __init__(self, params):
         self.name = params['name']
+        self.email = params['email']
+        self.password = params['password']
         self.sex = params['sex']
         self.age = params['age']
         self.current_location = params['current_location']
@@ -39,9 +43,20 @@ class Patient(db.Model):
         return "Id:" + str(self.product_id) + " Name: " + self.name + " Sex: " + self.sex + " Age: " + str(self.age) 
         + " Registered Hospital: " + self.current_location + " bloodtype: " + self.bloodtype
     
-    #reports =
-
-
+    
+def example_Patient():
     
     
-p.git
+    db.session.add(Patient({"name":"Jordan Test","email":"jj@test.com","password":"pass","sex":"Male",
+                            "age":22,"current_location":"Leeds","bloodtype":"A+"}))
+    db.session.commit()
+    patients = Patient.query.all()
+    for p in patients:
+        print("Id: ",p.patient_id,"name: ",p.name,"email: ",p.email,"password: ",p.password,
+              "Sex: ",p.sex,"Age: ",p.age,"current_location: ",p.current_location,"bloodtype:",p.bloodtype)
+    
+
+if __name__ == '__main__':
+    db.create_all()
+    example_Patient()
+    
