@@ -5,7 +5,6 @@ Created on 13 Feb 2019
 @author: Jordan61077
 '''
 
-
 from flask.app import Flask
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -64,7 +63,7 @@ class Report(db.Model):
     reason_for_admission = db.Column(db.String(50))
     notes = db.Column(db.String(200))
     attending_doctor = db.Column(db.String(200))
-    
+    
     def __init__(self, params):
         self.date = params['date']
         self.reason_for_admission = params['reason']
@@ -72,19 +71,19 @@ class Report(db.Model):
         self.notes = params['notes']
         self.attending_doctor = params['doctor']    
 
+ 
 
-def example_Patient():
-    
-    db.session.add(Patient({"name":"Jordan Test","email":"jj@test.com","password":"pass","sex":"Male",
-                            "age":22,"current_location":"Leeds","bloodtype":"A+"}))
-    db.session.commit()
-    patients = Patient.query.all()
-    for p in patients:
-        print("Id: ",p.patient_id,"name: ",p.name,"email: ",p.email,"password: ",p.password,
-              "Sex: ",p.sex,"Age: ",p.age,"current_location: ",p.current_location,"bloodtype:",p.bloodtype)
-    
-    return patients 
+@app.route('/api/reports/list')
+def fetch_all_reports():
+    return jsonpickle.encode(Report.query.all())
 
+
+
+@app.route('/api/patients/list')
+def fetch_all_patients():
+    return jsonpickle.encode(Patient.query.all())
+    
+  
 @app.route('/api/insert-patient', methods = ['POST'])
 def insert_Patient():
     
@@ -97,32 +96,30 @@ def insert_Patient():
               "Sex: ",p.sex,"Age: ",p.age,"current_location: ",p.current_location,"bloodtype:",p.bloodtype)
     
     return patients 
-
-@app.route('/api/patients/list')
-def fetch_all_patients():
-    return jsonpickle.encode(Patient.query.all())
-    
-    
-@app.route('/api/insert-report', methods = ['POST'])
-def example_Report():
-    r = db.session.add(Report({"date":"12/10/2018","reason":"Diarrhea","duration": 4,"notes":"it was bad","doctor":"Dr Tuts"}))
+  
+@app.route("/api/insert-report", methods = ['POST'])
+def insert_Report():
+    r = db.session.add(Report({"date":"13/5/1995","reason":"Lost thumb","duration": 2,"notes":"it was painful","doctor":"Dr Tuts"}))
     #p = Patient({"name":"Alex","sex":"M","age":"10","current_location":"Leeds","bloodtype":"O+"})
-    
     db.session.commit()
     report = Report.query.all()
     for r in report:
         print("Id",r.report_id, "Date:",r.date,"Duration:",r.duration,
-              "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:",r.attending_doctor)
+              "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:", r.attending_doctor)
     
     return jsonpickle.encode(report)
+
 
 
     
 
 if __name__ == '__main__':
+
     #db.create_all()
     #example_Report()
-    #example_Patient()
-    app.run(port=5500)      
+    #example_Patient()    
+    #db.create_all()
+    app.run(port=5500)
+
     pass
         
