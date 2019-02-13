@@ -5,10 +5,6 @@ Created on 13 Feb 2019
 @author: Jordan61077
 '''
 
-if __name__ == '__main__':
-    
-    pass
-
 from flask.app import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import backref
@@ -54,7 +50,7 @@ class Report(db.Model):
     reason_for_admission = db.Column(db.String(50))
     notes = db.Column(db.String(200))
     attending_doctor = db.Column(db.String(200))
-    
+    
     def __init__(self, params):
         self.date = params['date']
         self.reason_for_admission = params['reason']
@@ -74,25 +70,30 @@ def example_Patient():
     
     return patients 
 
+@app.route('/api/reports/list')
+def fetch_all_reports():
+    return jsonpickle.encode(Report.query.all())
 
-
+@app.route("/api/report-example", methods = ['POST'])
 def example_Report():
-    r = db.session.add(Report({"date":"12/10/2018","reason":"Diarrhea","duration": 4,"notes":"it was bad","doctor":"Dr Tuts"}))
+    r = db.session.add(Report({"date":"13/5/1995","reason":"Lost thumb","duration": 2,"notes":"it was painful","doctor":"Dr Tuts"}))
     #p = Patient({"name":"Alex","sex":"M","age":"10","current_location":"Leeds","bloodtype":"O+"})
        
     db.session.commit()
     report = Report.query.all()
     for r in report:
         print("Id",r.report_id, "Date:",r.date,"Duration:",r.duration,
-              "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:",r.attending_doctor)
+              "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:", r.attending_doctor)
     
-    return report
+    return jsonpickle.encode(report)
     
 
 if __name__ == '__main__':
     db.create_all()
-    example_Report()
-    example_Patient()
-        
+    
+    #example_Report()
+    #example_Patient()
+
+    app.run(port=5500)
     pass
         
