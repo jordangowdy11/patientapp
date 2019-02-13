@@ -6,7 +6,7 @@ Created on 13 Feb 2019
 '''
 
 from flask.app import Flask
-from flask import Flask, render_template
+from flask import Flask, render_template, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import backref
 import jsonpickle
@@ -86,7 +86,7 @@ def fetch_all_patients():
   
 @app.route('/api/insert-patient', methods = ['POST'])
 def insert_Patient():
-    
+    '''
     db.session.add(Patient({"name":"Jordan Test","email":"jj@test.com","password":"pass","sex":"Male",
                             "age":22,"current_location":"Leeds","bloodtype":"A+"}))
     db.session.commit()
@@ -96,22 +96,41 @@ def insert_Patient():
               "Sex: ",p.sex,"Age: ",p.age,"current_location: ",p.current_location,"bloodtype:",p.bloodtype)
     
     return patients 
-  
+    '''
+    db.session.add(
+        Patient({
+            "patient_name": request.form.get('patient_name'),
+            "patient_email": request.form.get('patient_email'),
+            "patient_password": request.form.get('patient_password'),
+            "sex": request.form.get('sex'),
+            "age": request.form.get('age'),
+            "current_location": request.form.get("current_location"),
+            "bloodtype": request.form.get("bloodtype")
+            }))
+    db.session.commit()
+    patients = Patient.query.all()
+    for p in patients:
+        print("Id: ",p.patient_id,"name: ",p.name,"email: ",p.email,"password: ",p.password,
+              "Sex: ",p.sex,"Age: ",p.age,"current_location: ",p.current_location,"bloodtype:",p.bloodtype)
+    return jsonpickle.encode(patients)
+
 @app.route("/api/insert-report", methods = ['POST'])
 def insert_Report():
-    r = db.session.add(Report({"date":"13/5/1995","reason":"Lost thumb","duration": 2,"notes":"it was painful","doctor":"Dr Tuts"}))
-    #p = Patient({"name":"Alex","sex":"M","age":"10","current_location":"Leeds","bloodtype":"O+"})
+
+    db.session.add(
+        Report({
+            "date": request.form.get('date'),
+            "reason": request.form.get('reason'),
+            "duration": request.form.get('duration'),
+            "notes": request.form.get('notes'),
+            "doctor": request.form.get('doctor')
+            }))
     db.session.commit()
     report = Report.query.all()
     for r in report:
         print("Id",r.report_id, "Date:",r.date,"Duration:",r.duration,
               "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:", r.attending_doctor)
-    
     return jsonpickle.encode(report)
-
-
-
-    
 
 if __name__ == '__main__':
 
