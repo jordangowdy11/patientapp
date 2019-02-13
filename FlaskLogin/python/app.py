@@ -5,6 +5,9 @@ Created on 8 Feb 2019
 '''
 
 from flask import Flask, render_template
+import jsonpickle
+from python.Patient import Patient
+
 #from data import Areas
 
 
@@ -20,6 +23,12 @@ def index():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+
+    
+    
+    
+
 
 if __name__ == '__main__':
     app.run(port = 5500)
