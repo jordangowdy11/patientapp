@@ -30,6 +30,19 @@ class Patient(db.Model):
     
     #reports =
 
-
+class Report(db.Model):
+    __tablename__ = "alc_reports"
     
+    report_id = db.Column(db.Integer, primary_key = True)
+    date = db.Column(db.String(50))
+    duration = db.Column(db.Integer)
+    reason_for_admission = db.Column(db.String(50))
+    notes = db.Column(db.String(200))
+    attending_doctor = db.Column(db.String(200))
+    
+    def __init__(self, params):
+        self.date = params['date']
+        self.reason_for_admission = params['reason']
+        self.notes = params['notes']
+        self.attending_doctor = params['doctor']    
     
