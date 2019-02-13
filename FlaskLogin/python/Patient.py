@@ -1,3 +1,14 @@
+
+'''
+Created on 13 Feb 2019
+
+@author: Jordan61077
+'''
+
+if __name__ == '__main__':
+    
+    pass
+
 from flask.app import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import backref
@@ -46,3 +57,4 @@ class Report(db.Model):
         self.notes = params['notes']
         self.attending_doctor = params['doctor']    
     
+
