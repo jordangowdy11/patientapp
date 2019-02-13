@@ -17,6 +17,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/graduate_training'
 db = SQLAlchemy(app)
 
+#Routes to html pages
 @app.route('/')
 def index():
     return render_template('home.html')
@@ -24,6 +25,14 @@ def index():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+@app.route('/register')
+def register_page():
+    return render_template('register.html')
+
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
 
 
 
@@ -82,12 +91,17 @@ def fetch_all_reports():
 @app.route('/api/patients/list')
 def fetch_all_patients():
     return jsonpickle.encode(Patient.query.all())
+
+@app.route('/web/patients')
+def display_patients():
+    return render_template("/patients.html", result = Patient.query.all(),content_type="application/json")
     
-  
+    
+    
 @app.route('/api/insert-patient', methods = ['POST'])
 def insert_Patient():
     
-    db.session.add(Patient({"name":"Jordan Test","email":"jj@test.com","password":"pass","sex":"Male",
+    db.session.add(Patient({"patient_name":"Jordan Test","patient_email":"jj@test.com","patient_password":"pass","sex":"Male",
                             "age":22,"current_location":"Leeds","bloodtype":"A+"}))
     db.session.commit()
     patients = Patient.query.all()
