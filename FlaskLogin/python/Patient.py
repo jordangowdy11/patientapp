@@ -6,7 +6,7 @@ Created on 13 Feb 2019
 '''
 
 from flask.app import Flask
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import backref
 import jsonpickle
@@ -107,6 +107,14 @@ def fetch_all_patients():
 @app.route('/web/patients')
 def display_patients():
     return render_template("/patients.html", result = Patient.query.all(),content_type="application/json")
+
+# @app.route('/patients/<int:patient_id>')
+# def find_patient_by_id(patient_id):
+#     for patient in Patient.query.all():
+#         if patient['patient_id'] == patient_id:
+#             p = patient
+#     p = Patient.query.filter_by(patient_id = request.form.get(patient_id)).first()
+#     return jsonify(p)
 
 @app.route('/web/reports')
 def reports():
