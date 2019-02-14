@@ -10,6 +10,7 @@ from flask import Flask, render_template, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import backref
 import jsonpickle
+from werkzeug.utils import redirect
 
 app = Flask(__name__)
 
@@ -48,7 +49,7 @@ class Patient(db.Model):
     current_location = db.Column(db.String(50))
     bloodtype = db.Column(db.String(50))
     #one patient can have many reports
-    report_id = db.Column(db.Integer, db.ForeignKey('alc_reports.report_id'), nullable = False)
+   
     
     
     
@@ -77,8 +78,7 @@ class Report(db.Model):
     notes = db.Column(db.String(200))
     attending_doctor = db.Column(db.String(200))
     #One Patient => reports
-    patients = db.relationship('Patient',
-                               backref=db.backref('report', lazy = True))
+  
     
     def __init__(self, params):
         self.date = params['date']
@@ -145,8 +145,44 @@ def insert_Report():
               "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:", r.attending_doctor)
     return jsonpickle.encode(report)
 
-def test_Report():
-    #drop table for extra column, test method
+@app.route("/web/insert-report", methods = ['POST'])
+def web_insert_report():
+
+    db.session.add(
+        Report({
+            "date": request.form.get('date'),
+            "duration": request.form.get('duration'),
+            "reason": request.form.get('reason'),
+            "notes": request.form.get('notes'),
+            "doctor": request.form.get('doctor')
+            }))
+    db.session.commit()
+    report = Report.query.all()
+    for r in report:
+        print("Id",r.report_id, "Date:",r.date,"Duration:",r.duration,
+              "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:", r.attending_doctor)
+    return redirect("/web/reports")
+
+@app.route('/web/register', methods = ['POST'])
+def web_register_patient():
+    db.session.add(
+        Patient({
+            "patient_name": request.form.get('patient_name'),
+            "patient_email": request.form.get('patient_email'),
+            "patient_password": request.form.get('patient_password'),
+            "sex": request.form.get('sex'),
+            "age": request.form.get('age'),
+            "current_location": request.form.get("current_location"),
+            "bloodtype": request.form.get("bloodtype")
+            }))
+    db.session.commit()
+    patients = Patient.query.all()
+    for p in patients:
+        print("Id: ",p.patient_id,"name: ",p.name,"email: ",p.email,"password: ",p.password,
+              "Sex: ",p.sex,"Age: ",p.age,"current_location: ",p.current_location,"bloodtype:",p.bloodtype)
+    return redirect("/web/patients")
+
+
     
     
     

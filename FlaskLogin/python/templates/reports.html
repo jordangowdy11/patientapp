@@ -3,7 +3,7 @@
 {% block body %}
 	<div class="jumbotron text-center">
 		<h1>Reports</h1>
-		<p class="lead">List of Reportsk</p>
+		<p class="lead">List of Reports</p>
 		
 		
 		<a href="register" class="btn btn-primary" role="button">Register</a>
@@ -34,6 +34,7 @@
 		<td>{{rep.reason_for_admission}}</td>
 		<td>{{rep.notes}}</td>
 		<td>{{rep.attending_doctor}}</td>
+		<td><a href="delete" class="btn btn-warning" role="button">Delete</a> </td>
 		
 	</tr>
 	
@@ -45,21 +46,25 @@
 	
 	
 </table>
-<!-- 
-<form id="par-reg-form" method="POST" action="./employees/register">
+
+<form id="rep-form" method="POST" action="./insert-report">
 <table>
 	<tr>
-		<td><input name="empno" placeholder="Employee Id:" id="empno"></td>
-		<td><input name="name" placeholder="Name:" id="name"></td>
-		<td><input name="salary" placeholder="Salary:" id="salary"></td>
+		<td><input name="date" placeholder="Date:" id="date"></td>
+		<td><input name="duration" placeholder="Duration:" id="duration"></td>
+		<td><input name="reason" placeholder="Reasoning:" id="reason"></td>
+		<td><input name="notes" placeholder="Notes:" id="notes"></td>
+		<td><input name="doctor" placeholder="Attending Dr:" id="doctor"></td>
+		
 		<td><input name="mode" type ="hidden" value="web"></td>
 		
-		<td><input id="add-emp" type="submit" value="Add"></td>
+		<td><input id="add-rep" type="submit" value="Add"></td>
 	</tr>
 
 </table>
 </form>
--->
+
+
 {%endif%}
 
 {% endblock %}
