@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+	<div class="jumbotron text-center">
+		<h1>Reports</h1>
+		<p class="lead">List of Reportsk</p>
+		
+		
+		<a href="register" class="btn btn-primary" role="button">Register</a>
+		<a href="login" class="btn btn-success" role="button">Login</a>
+		
+	
+		
+	</div>
+	
+<h2>List of Reports</h2>
+{% if result %}
+
+<table class="table table-dark">
+	<tr>
+	<th>Id</th>
+	<th>Date</th>
+	<th>Duration</th>
+	<th>Reasoning</th>
+	<th>Notes</th>
+	<th>Attending Doctor</th>
+	
+	</tr>
+	{% for rep in result %}
+	<tr>
+		<td>{{rep.report_id}}</td>
+		<td>{{rep.date}}</td>
+		<td>{{rep.duration}}</td>
+		<td>{{rep.reason_for_admission}}</td>
+		<td>{{rep.notes}}</td>
+		<td>{{rep.attending_doctor}}</td>
+		
+	</tr>
+	
+	{%endfor%}
+	
+	<tr>
+		<td id="count" colspan="6">{{result|count}} : Reports Fetched</td>
+	</tr>
+	
+	
+</table>
+<!-- 
+<form id="par-reg-form" method="POST" action="./employees/register">
+<table>
+	<tr>
+		<td><input name="empno" placeholder="Employee Id:" id="empno"></td>
+		<td><input name="name" placeholder="Name:" id="name"></td>
+		<td><input name="salary" placeholder="Salary:" id="salary"></td>
+		<td><input name="mode" type ="hidden" value="web"></td>
+		
+		<td><input id="add-emp" type="submit" value="Add"></td>
+	</tr>
+
+</table>
+</form>
+-->
+{%endif%}
+
+{% endblock %}

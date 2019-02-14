@@ -17,6 +17,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/graduate_training'
 db = SQLAlchemy(app)
 
+#Routes to html pages
 @app.route('/')
 def index():
     return render_template('home.html')
@@ -24,6 +25,14 @@ def index():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+@app.route('/register')
+def register_page():
+    return render_template('register.html')
+
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
 
 
 
@@ -38,6 +47,10 @@ class Patient(db.Model):
     age = db.Column(db.Integer)
     current_location = db.Column(db.String(50))
     bloodtype = db.Column(db.String(50))
+    #one patient can have many reports
+    report_id = db.Column(db.Integer, db.ForeignKey('alc_reports.report_id'), nullable = False)
+    
+    
     
     def __init__(self, params):
         self.name = params['patient_name']
@@ -63,8 +76,13 @@ class Report(db.Model):
     reason_for_admission = db.Column(db.String(50))
     notes = db.Column(db.String(200))
     attending_doctor = db.Column(db.String(200))
+
     patient_id = db.Column(db.Integer,
                         db.ForeignKey('alc_patients.patient_id'), nullable = False)
+    #One Patient => reports
+    #patients = db.relationship('Patient',
+    #                           backref=db.backref('report', lazy = True))
+
     
     def __init__(self, params):
         self.date = params['date']
@@ -84,21 +102,18 @@ def fetch_all_reports():
 @app.route('/api/patients/list')
 def fetch_all_patients():
     return jsonpickle.encode(Patient.query.all())
+
+@app.route('/web/patients')
+def display_patients():
+    return render_template("/patients.html", result = Patient.query.all(),content_type="application/json")
+
+@app.route('/web/reports')
+def reports():
+    return render_template("/reports.html", result = Report.query.all(),content_type="application/json")
+        
     
-  
 @app.route('/api/insert-patient', methods = ['POST'])
 def insert_Patient():
-    '''
-    db.session.add(Patient({"name":"Jordan Test","email":"jj@test.com","password":"pass","sex":"Male",
-                            "age":22,"current_location":"Leeds","bloodtype":"A+"}))
-    db.session.commit()
-    patients = Patient.query.all()
-    for p in patients:
-        print("Id: ",p.patient_id,"name: ",p.name,"email: ",p.email,"password: ",p.password,
-              "Sex: ",p.sex,"Age: ",p.age,"current_location: ",p.current_location,"bloodtype:",p.bloodtype)
-    
-    return patients 
-    '''
     db.session.add(
         Patient({
             "patient_name": request.form.get('patient_name'),
@@ -135,6 +150,13 @@ def insert_Report():
         print("Id",r.report_id, "Date:",r.date,"Duration:",r.duration,
               "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:", r.attending_doctor)
     return jsonpickle.encode(report)
+
+def test_Report():
+    #drop table for extra column, test method
+    
+    
+    
+    
 
 if __name__ == '__main__':
 
