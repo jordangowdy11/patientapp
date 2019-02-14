@@ -63,6 +63,8 @@ class Report(db.Model):
     reason_for_admission = db.Column(db.String(50))
     notes = db.Column(db.String(200))
     attending_doctor = db.Column(db.String(200))
+    patient_id = db.Column(db.Integer,
+                        db.ForeignKey('alc_patients.patient_id'), nullable = False)
     
     def __init__(self, params):
         self.date = params['date']
@@ -75,7 +77,7 @@ class Report(db.Model):
 
 @app.route('/api/reports/list')
 def fetch_all_reports():
-    return jsonpickle.encode(Report.query.all())
+    pass
 
 
 
@@ -105,7 +107,8 @@ def insert_Patient():
             "sex": request.form.get('sex'),
             "age": request.form.get('age'),
             "current_location": request.form.get("current_location"),
-            "bloodtype": request.form.get("bloodtype")
+            "bloodtype": request.form.get("bloodtype"),
+            
             }))
     db.session.commit()
     patients = Patient.query.all()
@@ -123,7 +126,8 @@ def insert_Report():
             "reason": request.form.get('reason'),
             "duration": request.form.get('duration'),
             "notes": request.form.get('notes'),
-            "doctor": request.form.get('doctor')
+            "doctor": request.form.get('doctor'),
+            "patient_id": request.form.get('patient_id')
             }))
     db.session.commit()
     report = Report.query.all()
