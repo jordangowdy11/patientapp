@@ -37,6 +37,7 @@ def login_page():
 
 
 
+
 class Patient(db.Model):
     __tablename__ = "alc_patients"
     
@@ -112,18 +113,24 @@ def fetch_all_patients():
 def display_patients():
     return render_template("/patients.html", result = Patient.query.all(),content_type="application/json")
 
-# @app.route('/patients/<int:patient_id>')
-# def find_patient_by_id(patient_id):
-#     for patient in Patient.query.all():
-#         if patient['patient_id'] == patient_id:
-#             p = patient
-#     p = Patient.query.filter_by(patient_id = request.form.get(patient_id)).first()
-#     return jsonify(p)
+@app.route('/patients/<int:patient_id>')
+def find_patient_by_id(patient_id):
+    p = Patient.query.filter_by(patient_id = patient_id).first()
+    return jsonpickle.encode(p)
+
+@app.route('/reports/patient/<int:patient_id>')
+def find_reports_by_patient(patient_id):
+    r = Report.query.filter_by(patient_id = patient_id).all()
+    return jsonpickle.encode(r)
 
 @app.route('/web/reports')
 def reports():
     return render_template("/reports.html", result = Report.query.all(),content_type="application/json")
         
+@app.route('/web/patient_details/<int:patient_id>')
+def display_patient_details(patient_id):
+    return render_template("/patient_details.html", result = jsonpickle.decode(find_reports_by_patient(patient_id)), 
+                           content_type = "application/json")
     
 @app.route('/api/insert-patient', methods = ['POST'])
 def insert_Patient():
@@ -172,20 +179,23 @@ def insert_Report():
 @app.route("/web/insert-report", methods = ['POST'])
 def web_insert_report():
 
-    db.session.add(
-        Report({
+    r =  Report({
             "date": request.form.get('date'),
-            "duration": request.form.get('duration'),
             "reason": request.form.get('reason'),
+            "duration": request.form.get('duration'),
             "notes": request.form.get('notes'),
-            "doctor": request.form.get('doctor')
-            }))
+            "doctor": request.form.get('doctor'),
+            "patient_id": request.form.get('patient_id')
+            })
+    p = Patient.query.filter_by(patient_id = request.form.get('patient_id')).first()
+    p.reports.append(r)
+    db.session.add(r)
     db.session.commit()
     report = Report.query.all()
     for r in report:
         print("Id",r.report_id, "Date:",r.date,"Duration:",r.duration,
               "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:", r.attending_doctor)
-    return redirect("/web/reports")
+    return redirect("web/patient_details/" + str(request.form.get('patient_id')))
 
 @app.route('/web/register', methods = ['POST'])
 def web_register_patient():

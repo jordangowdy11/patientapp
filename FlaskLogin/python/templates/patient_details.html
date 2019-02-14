@@ -2,20 +2,18 @@
 
 {% block body %}
 	<div class="jumbotron text-center">
-		<h1>Reports</h1>
-		<p class="lead">List of Reports</p>
+		<h1>Welcome To PatientApp</h1>
+		<p class="lead">Built from using the Python Flask Framework</p>
 		
 		
 		<a href="../register" class="btn btn-primary" role="button">Register</a>
 		<a href="../login" class="btn btn-success" role="button">Login</a>
 		
 	
-		
 	</div>
-	
-<h2>List of Reports</h2>
+<h2>Medical Reports for:</h2>
 {% if result %}
-
+	
 <table class="table table-dark">
 	<tr>
 	<th>Id</th>
@@ -34,21 +32,11 @@
 		<td>{{rep.reason_for_admission}}</td>
 		<td>{{rep.notes}}</td>
 		<td>{{rep.attending_doctor}}</td>
-		<td>{{rep.patient.email}}</td>
-		<td><a href="delete" class="btn btn-warning" role="button">Delete</a> </td>
-		
-	</tr>
-	
+		<td><a href="view" class="btn btn-primary" role="button">View</a> </td>
+
 	{%endfor%}
 	
-	<tr>
-		<td id="count" colspan="6">{{result|count}} : Reports Fetched</td>
-	</tr>
-	
-	
-</table>
-
-<form id="rep-form" method="POST" action="./insert-report">
+	<form id="rep-form" method="POST" action="../insert-report">
 <table>
 	<tr>
 		<td><input name="date" placeholder="Date:" id="date"></td>
@@ -56,17 +44,16 @@
 		<td><input name="reason" placeholder="Reasoning:" id="reason"></td>
 		<td><input name="notes" placeholder="Notes:" id="notes"></td>
 		<td><input name="doctor" placeholder="Attending Dr:" id="doctor"></td>
-		
-		
+		<td><input name="patient_id" type ="hidden" value={{result[0].patient_id}}></td>
 		<td><input name="mode" type ="hidden" value="web"></td>
+		
 		
 		<td><input id="add-rep" type="submit" value="Add"></td>
 	</tr>
 
 </table>
 </form>
-
-
-{%endif%}
+		
+		{%endif%}
 
 {% endblock %}

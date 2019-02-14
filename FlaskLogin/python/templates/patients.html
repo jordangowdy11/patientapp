@@ -4,10 +4,8 @@
 	<div class="jumbotron text-center">
 		<h1>Welcome To PatientApp</h1>
 		<p class="lead">Built from using the Python Flask Framework</p>
-		
-		
-		<a href="register" class="btn btn-primary" role="button">Register</a>
-		<a href="login" class="btn btn-success" role="button">Login</a>
+		<a href="../register" class="btn btn-primary" role="button">Register</a>
+		<a href="../login" class="btn btn-success" role="button">Login</a>
 		
 	
 		
@@ -36,6 +34,7 @@
 		<td>{{par.age}}</td>
 		<td>{{par.current_location}}</td>
 		<td>{{par.bloodtype}}</td>
+		<td><a href="patient_details/{{par.patient_id}}" class="btn btn-primary" role="button">Patient Details</a></td>
 	</tr>
 	
 	{%endfor%}
