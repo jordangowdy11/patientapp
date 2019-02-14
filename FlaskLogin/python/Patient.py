@@ -10,6 +10,7 @@ from flask import Flask, render_template, request, Response, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import backref
 import jsonpickle
+from werkzeug.utils import redirect
 
 app = Flask(__name__)
 
@@ -47,10 +48,10 @@ class Patient(db.Model):
     age = db.Column(db.Integer)
     current_location = db.Column(db.String(50))
     bloodtype = db.Column(db.String(50))
-    #one patient can have many reports
     
     reports = db.relationship('Report',
                               backref = db.backref('patient', lazy=True))
+
     
     
     
@@ -80,9 +81,8 @@ class Report(db.Model):
     attending_doctor = db.Column(db.String(200))
     patient_id = db.Column(db.Integer,
                         db.ForeignKey('alc_patients.patient_id'), nullable = False)
-    #One Patient => reports
-    #patients = db.relationship('Patient',
-    #                           backref=db.backref('report', lazy = True))
+    #One Patient => report
+
 
     
     def __init__(self, params):
@@ -90,12 +90,16 @@ class Report(db.Model):
         self.reason_for_admission = params['reason']
         self.duration = params['duration']
         self.notes = params['notes']
-        self.attending_doctor = params['doctor']    
+        self.attending_doctor = params['doctor'] 
+           
 
  
 
 @app.route('/api/reports/list')
 def fetch_all_reports():
+    for r in Report.query.all():
+        print(r.patient.name)
+    return jsonpickle.encode(Report.query.all())
     pass
 
 
@@ -164,6 +168,43 @@ def insert_Report():
               "Patient Id:", r.patient_id)
     return jsonpickle.encode(report)
 
+
+@app.route("/web/insert-report", methods = ['POST'])
+def web_insert_report():
+
+    db.session.add(
+        Report({
+            "date": request.form.get('date'),
+            "duration": request.form.get('duration'),
+            "reason": request.form.get('reason'),
+            "notes": request.form.get('notes'),
+            "doctor": request.form.get('doctor')
+            }))
+    db.session.commit()
+    report = Report.query.all()
+    for r in report:
+        print("Id",r.report_id, "Date:",r.date,"Duration:",r.duration,
+              "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:", r.attending_doctor)
+    return redirect("/web/reports")
+
+@app.route('/web/register', methods = ['POST'])
+def web_register_patient():
+    db.session.add(
+        Patient({
+            "patient_name": request.form.get('patient_name'),
+            "patient_email": request.form.get('patient_email'),
+            "patient_password": request.form.get('patient_password'),
+            "sex": request.form.get('sex'),
+            "age": request.form.get('age'),
+            "current_location": request.form.get("current_location"),
+            "bloodtype": request.form.get("bloodtype")
+            }))
+    db.session.commit()
+    patients = Patient.query.all()
+    for p in patients:
+        print("Id: ",p.patient_id,"name: ",p.name,"email: ",p.email,"password: ",p.password,
+              "Sex: ",p.sex,"Age: ",p.age,"current_location: ",p.current_location,"bloodtype:",p.bloodtype)
+    return redirect("/web/patients")
 
     
     
