@@ -48,8 +48,10 @@ class Patient(db.Model):
     age = db.Column(db.Integer)
     current_location = db.Column(db.String(50))
     bloodtype = db.Column(db.String(50))
-    #one patient can have many reports
-   
+    
+    reports = db.relationship('Report',
+                              backref = db.backref('patient', lazy=True))
+
     
     
     
@@ -77,21 +79,28 @@ class Report(db.Model):
     reason_for_admission = db.Column(db.String(50))
     notes = db.Column(db.String(200))
     attending_doctor = db.Column(db.String(200))
-    #One Patient => reports
-  
+    patient_id = db.Column(db.Integer,
+                        db.ForeignKey('alc_patients.patient_id'), nullable = False)
+    #One Patient => report
+
+
     
     def __init__(self, params):
         self.date = params['date']
         self.reason_for_admission = params['reason']
         self.duration = params['duration']
         self.notes = params['notes']
-        self.attending_doctor = params['doctor']    
+        self.attending_doctor = params['doctor'] 
+           
 
  
 
 @app.route('/api/reports/list')
 def fetch_all_reports():
+    for r in Report.query.all():
+        print(r.patient.name)
     return jsonpickle.encode(Report.query.all())
+    pass
 
 
 
@@ -118,7 +127,8 @@ def insert_Patient():
             "sex": request.form.get('sex'),
             "age": request.form.get('age'),
             "current_location": request.form.get("current_location"),
-            "bloodtype": request.form.get("bloodtype")
+            "bloodtype": request.form.get("bloodtype"),
+            
             }))
     db.session.commit()
     patients = Patient.query.all()
@@ -130,20 +140,26 @@ def insert_Patient():
 @app.route("/api/insert-report", methods = ['POST'])
 def insert_Report():
 
-    db.session.add(
-        Report({
+    r =  Report({
             "date": request.form.get('date'),
             "reason": request.form.get('reason'),
             "duration": request.form.get('duration'),
             "notes": request.form.get('notes'),
-            "doctor": request.form.get('doctor')
-            }))
+            "doctor": request.form.get('doctor'),
+            "patient_id": request.form.get('patient_id')
+            })
+    p = Patient.query.filter_by(patient_id = request.form.get('patient_id')).first()
+    p.reports.append(r)
+    db.session.add(r)
+    
     db.session.commit()
     report = Report.query.all()
     for r in report:
         print("Id",r.report_id, "Date:",r.date,"Duration:",r.duration,
-              "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:", r.attending_doctor)
+              "Reason:",r.reason_for_admission,"notes:",r.notes,"Doctor:", r.attending_doctor,
+              "Patient Id:", r.patient_id)
     return jsonpickle.encode(report)
+
 
 @app.route("/web/insert-report", methods = ['POST'])
 def web_insert_report():
@@ -182,15 +198,13 @@ def web_register_patient():
               "Sex: ",p.sex,"Age: ",p.age,"current_location: ",p.current_location,"bloodtype:",p.bloodtype)
     return redirect("/web/patients")
 
-
-    
     
     
     
 
 if __name__ == '__main__':
 
-    #db.create_all()
+    db.create_all()
     #example_Report()
     #example_Patient()    
     #db.create_all()

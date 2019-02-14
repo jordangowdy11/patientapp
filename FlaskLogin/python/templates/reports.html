@@ -24,7 +24,7 @@
 	<th>Reasoning</th>
 	<th>Notes</th>
 	<th>Attending Doctor</th>
-	
+	<th>Patient Information</th>
 	</tr>
 	{% for rep in result %}
 	<tr>
@@ -34,6 +34,7 @@
 		<td>{{rep.reason_for_admission}}</td>
 		<td>{{rep.notes}}</td>
 		<td>{{rep.attending_doctor}}</td>
+		<td>{{rep.patient.email}}</td>
 		<td><a href="delete" class="btn btn-warning" role="button">Delete</a> </td>
 		
 	</tr>
@@ -55,6 +56,7 @@
 		<td><input name="reason" placeholder="Reasoning:" id="reason"></td>
 		<td><input name="notes" placeholder="Notes:" id="notes"></td>
 		<td><input name="doctor" placeholder="Attending Dr:" id="doctor"></td>
+		
 		
 		<td><input name="mode" type ="hidden" value="web"></td>
 		
