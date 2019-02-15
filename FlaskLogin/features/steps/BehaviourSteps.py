@@ -44,29 +44,7 @@ def check_patient_count(context):
     context.driver.save_screenshot("snaps/Patient.png")
     ok_(len(context.countText)>0,"Patient not found")
     
-@given('a set of patients for form')
-def submit_html_patient_registration(context):
-    context.driver = webdriver.Chrome()
-    context.driver.get("http://localhost:5500/web/patients")
-    context.count_text = context.driver.find_element_by_id("count").text
-    for row in context.table:
-        context.driver.find_element_by_id("patient_name").send_keys(row["patient_name"])
-        context.driver.find_element_by_id("patient_email").send_keys(row["patient_email"])
-        context.driver.find_element_by_id("patient_password").send_keys(row["patient_password"])
-        context.driver.find_element_by_id("sex").send_keys(row["sex"])
-        context.driver.find_element_by_id("age").send_keys(row["age"])
-        context.driver.find_element_by_id("current_location").send_keys(row["current_location"])
-        context.driver.find_element_by_id("bloodtype").send_keys(row["bloodtype"])
-        
-        context.driver.save_screenshot("snaps/add_patient_form"+row["patient_name"]+".png")
-        context.driver.find_element_by_id("reg-form").click()
-        context.driver.save_screenshot("snaps/add_patient_submit"+row["patient_name"]+".png")
-        
-@then('increases patient count from browser')
-def check_patient_count_from_browser(context):
-    ok_(not (context.count_text == context.driver.find_element_by_id("count").text),
-        "count not changed")
-        
+
         
                             
                             
