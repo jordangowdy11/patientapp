@@ -11,8 +11,8 @@
 		
 	
 	</div>
-<h2>Medical Reports for:</h2>
-{% if result %}
+<h2>Medical Reports for Patient Number {{result.pid}}:</h2>
+{% if result.reports %}
 	
 <table class="table table-dark">
 	<tr>
@@ -24,7 +24,7 @@
 	<th>Attending Doctor</th>
 	<th>Patient Information</th>
 	</tr>
-	{% for rep in result %}
+	{% for rep in result.reports %}
 	<tr>
 		<td>{{rep.report_id}}</td>
 		<td>{{rep.date}}</td>
@@ -36,6 +36,8 @@
 
 	{%endfor%}
 	
+	{%endif%}
+	
 	<form id="rep-form" method="POST" action="../insert-report">
 <table>
 	<tr>
@@ -44,7 +46,7 @@
 		<td><input name="reason" placeholder="Reasoning:" id="reason"></td>
 		<td><input name="notes" placeholder="Notes:" id="notes"></td>
 		<td><input name="doctor" placeholder="Attending Dr:" id="doctor"></td>
-		<td><input name="patient_id" type ="hidden" value={{result[0].patient_id}}></td>
+		<td><input name="patient_id" type ="hidden" value={{result.pid}}></td>
 		<td><input name="mode" type ="hidden" value="web"></td>
 		
 		
@@ -54,6 +56,4 @@
 </table>
 </form>
 		
-		{%endif%}
-
 {% endblock %}
