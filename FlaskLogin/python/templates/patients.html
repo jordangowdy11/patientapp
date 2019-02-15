@@ -35,6 +35,7 @@
 		<td>{{par.current_location}}</td>
 		<td>{{par.bloodtype}}</td>
 		<td><a href="patient_details/{{par.patient_id}}" class="btn btn-primary" role="button">Patient Details</a></td>
+		<td><a href="/web/patient/delete/{{par.patient_id}}" class="btn btn-warning" role="button">Delete</a> </td>
 	</tr>
 	
 	{%endfor%}
@@ -45,21 +46,7 @@
 	
 	
 </table>
-<!-- 
-<form id="par-reg-form" method="POST" action="./employees/register">
-<table>
-	<tr>
-		<td><input name="empno" placeholder="Employee Id:" id="empno"></td>
-		<td><input name="name" placeholder="Name:" id="name"></td>
-		<td><input name="salary" placeholder="Salary:" id="salary"></td>
-		<td><input name="mode" type ="hidden" value="web"></td>
-		
-		<td><input id="add-emp" type="submit" value="Add"></td>
-	</tr>
 
-</table>
-</form>
--->
 {%endif%}
 
 {% endblock %}

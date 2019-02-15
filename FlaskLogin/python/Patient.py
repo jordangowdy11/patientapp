@@ -52,9 +52,6 @@ class Patient(db.Model):
     
     reports = db.relationship('Report',
                               backref = db.backref('patient', lazy=True))
-
-    
-    
     
     def __init__(self, params):
         self.name = params['patient_name']
@@ -82,27 +79,21 @@ class Report(db.Model):
     attending_doctor = db.Column(db.String(200))
     patient_id = db.Column(db.Integer,
                         db.ForeignKey('alc_patients.patient_id'), nullable = False)
-    #One Patient => report
-
-
-    
+    #One Patient => report
     def __init__(self, params):
         self.date = params['date']
         self.reason_for_admission = params['reason']
         self.duration = params['duration']
         self.notes = params['notes']
         self.attending_doctor = params['doctor'] 
-           
-
  
-
+           
 @app.route('/api/reports/list')
 def fetch_all_reports():
     for r in Report.query.all():
         print(r.patient.name)
     return jsonpickle.encode(Report.query.all())
     pass
-
 
 
 @app.route('/api/patients/list')
@@ -176,6 +167,24 @@ def insert_Report():
     return jsonpickle.encode(report)
 
 
+@app.route("/api/patient/delete/<int:patient_id>",methods=['DELETE'])
+def remove_patient(patient_id):
+    p = Patient.query.filter_by(patient_id = patient_id).first()
+    db.session.delete(p)
+    db.session.commit()
+    return jsonpickle.encode(p)
+   
+
+@app.route("/api/report/delete/<int:report_id>",methods=['DELETE'])
+def remove_report(report_id):
+    r = Report.query.filter_by(report_id=report_id).first()
+    db.session.delete(r)
+    db.session.commit()
+
+    return jsonpickle.encode (r)
+
+
+
 @app.route("/web/insert-report", methods = ['POST'])
 def web_insert_report():
 
@@ -216,9 +225,21 @@ def web_register_patient():
               "Sex: ",p.sex,"Age: ",p.age,"current_location: ",p.current_location,"bloodtype:",p.bloodtype)
     return redirect("/web/patients")
 
-    
-    
-    
+@app.route("/web/patient/delete/<int:patient_id>",methods=['GET'])
+def remove_web_patient(patient_id):
+    p = Patient.query.filter_by(patient_id = patient_id).first()
+    db.session.delete(p)
+    db.session.commit()
+    return redirect("/web/patients")
+
+@app.route("/web/report/delete/<int:report_id>",methods=['GET'])
+def remove_web_report(report_id):
+    r = Report.query.filter_by(report_id=report_id).first()
+    db.session.delete(r)
+    db.session.commit()
+
+    return redirect("/web/reports")
+
 
 if __name__ == '__main__':
 
