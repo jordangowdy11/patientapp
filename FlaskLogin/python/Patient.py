@@ -129,7 +129,7 @@ def reports():
         
 @app.route('/web/patient_details/<int:patient_id>')
 def display_patient_details(patient_id):
-    return render_template("/patient_details.html", result = jsonpickle.decode(find_reports_by_patient(patient_id)), 
+    return render_template("/patient_details.html", result = {"pid": patient_id, "reports": jsonpickle.decode(find_reports_by_patient(patient_id))}, 
                            content_type = "application/json")
     
 @app.route('/api/insert-patient', methods = ['POST'])
